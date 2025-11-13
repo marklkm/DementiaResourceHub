@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dementia Resource Hub</title>
+    <meta
+      name="description"
+      content="A simple, highly accessible Bootstrap website to browse, read, and download dementia PDFs and curated links."
+    />
+
+    <!-- Bootstrap 5 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+
+    <!-- Prefer-reduced-motion for subtle animations -->
+    <style>
+      :root {
+        --focus-ring: 0 0 0 0.25rem rgba(13, 110, 253, 0.5);
+      }
+      /* OpenDyslexic local font (optional). Place file at ./fonts/OpenDyslexic-Regular.woff2 */
+      @font-face {
+        font-family: "OpenDyslexic";
+        src: url("fonts/OpenDyslexic-Regular.woff2") format("woff2");
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+      .odx-font {
+        font-family: OpenDyslexic, system-ui, -apple-system, Segoe UI, Roboto,
+          "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+        letter-spacing: 0.2px;
+      }
+
+      /* High-contrast mode */
+      .high-contrast,
+      .high-contrast .card {
+        background: #000 !important;
+        color: #fff !important;
+      }
+      .high-contrast a {
+        color: #0ff !important;
+        text-decoration: underline;
+      }
+      .high-contrast .form-control,
+      .high-contrast .form-select {
+        background: #111;
+        color: #fff;
+        border-color: #666;
+      }
+
+      /* Improve focus visibility */
+      :focus {
+        outline: none;
+        box-shadow: var(--focus-ring);
+      }
+
+      /* Cards */
+      .resource-card {
+        min-height: 100%;
+      }
+
+      /* Compact containers on very wide screens for readability */
+      .container-narrow {
+        max-width: 980px;
+      }
+    </style>
+  </head>
+  <body class="bg-light text-dark">
+    <a
+      class="visually-hidden-focusable position-absolute top-0 start-0 m-2"
+      href="#main"
+      >Skip to main content</a
+    >
+
+    <header class="py-3 border-bottom bg-white">
+      <div
+        class="container container-narrow d-flex flex-wrap align-items-center justify-content-between gap-3"
+      >
+        <div class="d-flex align-items-center gap-2">
+          <span class="fs-3" aria-hidden="true">🧠</span>
+          <h1 class="h3 m-0" id="site-title">Dementia Resource Hub</h1>
+        </div>
+
+        <div
+          class="d-flex flex-wrap gap-2"
+          role="group"
+          aria-label="Accessibility controls"
+        >
+          <button
+            id="btnFontUp"
+            class="btn btn-outline-primary btn-sm"
+            type="button"
+            aria-label="Increase text size"
+          >
+            A<span class="ms-1" aria-hidden="true">+</span>
+          </button>
+          <button
+            id="btnFontDown"
+            class="btn btn-outline-primary btn-sm"
+            type="button"
+            aria-label="Decrease text size"
+          >
+            A<span class="ms-1" aria-hidden="true">−</span>
+          </button>
+          <button
+            id="btnDyslexic"
+            class="btn btn-outline-secondary btn-sm"
+            type="button"
+            aria-pressed="false"
+            aria-label="Enable dyslexic-friendly font"
+          >
+            OpenDyslexic
+          </button>
+          <button
+            id="btnContrast"
+            class="btn btn-outline-dark btn-sm"
+            type="button"
+            aria-pressed="false"
+            aria-label="Enable high contrast"
+          >
+            High contrast
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main" class="py-4">
+      <div class="container container-narrow">
+        <div class="mb-4">
+          <p class="lead m-0">
+            Browse, read online, or download easy-to-read PDFs about dementia.
+            There's also a list of helpful websites.
+          </p>
+        </div>
+
+        <!-- Search / Filters -->
+        <div
+          class="row g-2 align-items-start mb-4"
+          role="search"
+          aria-label="Search resources"
+        >
+          <div class="col-12 col-md-8">
+            <label for="searchInput" class="form-label mb-0"
+              >Search by title or description</label
+            >
+            <input
+              id="searchInput"
+              class="form-control"
+              type="search"
+              placeholder="e.g., memory, carers, safety"
+              aria-describedby="searchHelp"
+            />
+            <div id="searchHelp" class="form-text">
+              Search applies to both PDFs and links below.
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <label for="categorySelect" class="form-label mb-0">Filter</label>
+            <select
+              id="categorySelect"
+              class="form-select"
+              aria-label="Filter by resource type"
+            >
+              <option value="all" selected>All resources</option>
+              <option value="pdf">PDFs only</option>
+              <option value="link">Websites only</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- PDFs section -->
+        <section class="mb-5" aria-labelledby="pdfs-heading">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <h2 id="pdfs-heading" class="h4 m-0">PDF Guides</h2>
+            <span class="text-muted" id="pdfCount" aria-live="polite"></span>
+          </div>
+          <div id="pdfGrid" class="row row-cols-1 row-cols-md-2 g-3">
+            <!-- Dublin Services -->
+            <div
+              class="col resource-item"
+              data-type="pdf"
+              data-title="Dublin Services"
+              data-desc="Dublin Services - dementia day centres, home care, social clubs, and supports."
+            >
+              <article class="card resource-card h-100" tabindex="0">
+                <div class="card-body d-flex flex-column">
+                  <h3 class="h5 card-title">Dublin Services</h3>
+                  <p class="card-text flex-grow-1">
+                    Dublin Services - dementia day care, Day Care at Home,
+                    social clubs and home care supports across Dublin.
+                  </p>
+
+                  <div class="d-flex gap-2 mt-2">
+                    <a
+                      class="btn btn-primary"
+                      href="pdf/Dublin-Services.pdf"
+                      target="_blank"
+                      rel="noopener"
+                      aria-label="Open Dublin Services PDF in a new tab"
+                      >Read</a
+                    >
+                    <a
+                      class="btn btn-outline-primary"
+                      href="pdf/Dublin-Services.pdf"
+                      download
+                      aria-label="Download Dublin Services PDF"
+                      >Download</a
+                    >
+                    <button
+                      class="btn btn-outline-secondary btnPreview"
+                      type="button"
+                      aria-expanded="false"
+                      aria-controls="preview-1"
+                    >
+                      Preview
+                    </button>
+                  </div>
+                </div>
+                <div
+                  id="preview-1"
+                  class="ratio ratio-4x3 border-top visually-hidden"
+                  aria-hidden="true"
+                >
+                  <iframe
+                    title="Preview: Dublin Services"
+                    src="pdf/Dublin-Services.pdf#view=FitH"
+                    loading="lazy"
+                  ></iframe>
+                </div>
+              </article>
+            </div>
+
+            <!-- ASI Plan For Future 2024 -->
+            <div
+              class="col resource-item"
+              data-type="pdf"
+              data-title="ASI Plan For Future 2024"
+              data-desc="Planning your legal, financial, health and care affairs when living with dementia."
+            >
+              <article class="card resource-card h-100" tabindex="1">
+                <div class="card-body d-flex flex-column">
+                  <h3 class="h5 card-title">ASI Plan For Future 2024</h3>
+                  <p class="card-text flex-grow-1">
+                    A booklet for people with dementia to help plan legal,
+                    financial, health and care decisions for the future.
+                  </p>
+                  <div class="d-flex gap-2 mt-2">
+                    <a
+                      class="btn btn-primary"
+                      href="pdf/ASI-PlanForFuture-2024.pdf"
+                      target="_blank"
+                      rel="noopener"
+                      aria-label="Open ASI Plan For Future 2024 PDF in a new tab"
+                      >Read</a
+                    >
+                    <a
+                      class="btn btn-outline-primary"
+                      href="pdf/ASI-PlanForFuture-2024.pdf"
+                      download
+                      aria-label="Download ASI Plan For Future 2024 PDF"
+                      >Download</a
+                    >
+                    <button
+                      class="btn btn-outline-secondary btnPreview"
+                      type="button"
+                      aria-expanded="false"
+                      aria-controls="preview-2"
+                    >
+                      Preview
+                    </button>
+                  </div>
+                </div>
+                <div
+                  id="preview-2"
+                  class="ratio ratio-4x3 border-top visually-hidden"
+                  aria-hidden="true"
+                >
+                  <iframe
+                    title="Preview: ASI Plan For Future 2024"
+                    src="pdf/ASI-PlanForFuture-2024.pdf#view=FitH"
+                    loading="lazy"
+                  ></iframe>
+                </div>
+              </article>
+            </div>
+
+            <!-- Engaging Activities at home -->
+            <div
+              class="col resource-item"
+              data-type="pdf"
+              data-title="Engaging Activities at Home"
+              data-desc="Ideas and tips for engaging in everyday activities at home for people living with dementia."
+            >
+              <article class="card resource-card h-100" tabindex="2">
+                <div class="card-body d-flex flex-column">
+                  <h3 class="h5 card-title">Engaging Activities at Home</h3>
+                  <p class="card-text flex-grow-1">
+                    Engaging in Activities At Home for people living with
+                    dementia, with practical activity ideas for every day.
+                  </p>
+                  <div class="d-flex gap-2 mt-2">
+                    <a
+                      class="btn btn-primary"
+                      href="pdf/Engaging-Activities-at-home_V3.pdf"
+                      target="_blank"
+                      rel="noopener"
+                      aria-label="Open Engaging Activities at Home PDF in a new tab"
+                      >Read</a
+                    >
+                    <a
+                      class="btn btn-outline-primary"
+                      href="pdf/Engaging-Activities-at-home_V3.pdf"
+                      download
+                      aria-label="Download Engaging Activities at Home PDF"
+                      >Download</a
+                    >
+                    <button
+                      class="btn btn-outline-secondary btnPreview"
+                      type="button"
+                      aria-expanded="false"
+                      aria-controls="preview-3"
+                    >
+                      Preview
+                    </button>
+                  </div>
+                </div>
+                <div
+                  id="preview-3"
+                  class="ratio ratio-4x3 border-top visually-hidden"
+                  aria-hidden="true"
+                >
+                  <iframe
+                    title="Preview: Engaging Activities at Home"
+                    src="pdf/Engaging-Activities-at-home_V3.pdf#view=FitH"
+                    loading="lazy"
+                  ></iframe>
+                </div>
+              </article>
+            </div>
+
+            <!-- Life Story Book at home V3 -->
+            <div
+              class="col resource-item"
+              data-type="pdf"
+              data-title="Life Story Book at Home"
+              data-desc="How to create a Life Story Book, memory box and meaningful reminiscence activities."
+            >
+              <article class="card resource-card h-100" tabindex="3">
+                <div class="card-body d-flex flex-column">
+                  <h3 class="h5 card-title">Life Story Book at Home</h3>
+                  <p class="card-text flex-grow-1">
+                    Information for families on creating a Life Story Book,
+                    memory or conversation box, and sorting and tidying
+                    activities.
+                  </p>
+                  <div class="d-flex gap-2 mt-2">
+                    <a
+                      class="btn btn-primary"
+                      href="pdf/Life-Story-Book-at-home_V3.pdf"
+                      target="_blank"
+                      rel="noopener"
+                      aria-label="Open Life Story Book at Home PDF in a new tab"
+                      >Read</a
+                    >
+                    <a
+                      class="btn btn-outline-primary"
+                      href="pdf/Life-Story-Book-at-home_V3.pdf"
+                      download
+                      aria-label="Download Life Story Book at Home PDF"
+                      >Download</a
+                    >
+                    <button
+                      class="btn btn-outline-secondary btnPreview"
+                      type="button"
+                      aria-expanded="false"
+                      aria-controls="preview-4"
+                    >
+                      Preview
+                    </button>
+                  </div>
+                </div>
+                <div
+                  id="preview-4"
+                  class="ratio ratio-4x3 border-top visually-hidden"
+                  aria-hidden="true"
+                >
+                  <iframe
+                    title="Preview: Life Story Book at Home"
+                    src="pdf/Life-Story-Book-at-home_V3.pdf#view=FitH"
+                    loading="lazy"
+                  ></iframe>
+                </div>
+              </article>
+            </div>
+
+            <!-- Living Well With Dementia - Activity Groups -->
+            <div
+              class="col resource-item"
+              data-type="pdf"
+              data-title="Living Well With Dementia Activity Groups"
+              data-desc="Weekly activity groups that support physical, mental, and social wellbeing."
+            >
+              <article class="card resource-card h-100" tabindex="4">
+                <div class="card-body d-flex flex-column">
+                  <h3 class="h5 card-title">
+                    Living Well With Dementia – Activity Groups
+                  </h3>
+                  <p class="card-text flex-grow-1">
+                    Weekly activity groups especially welcoming to people living
+                    with dementia, their families, and carers, including choir,
+                    art, movement to music and more.
+                  </p>
+                  <div class="d-flex gap-2 mt-2">
+                    <a
+                      class="btn btn-primary"
+                      href="pdf/LWwD-Activty-groups.pdf"
+                      target="_blank"
+                      rel="noopener"
+                      aria-label="Open Living Well With Dementia Activity Groups PDF in a new tab"
+                      >Read</a
+                    >
+                    <a
+                      class="btn btn-outline-primary"
+                      href="pdf/LWwD-Activty-groups.pdf"
+                      download
+                      aria-label="Download Living Well With Dementia Activity Groups PDF"
+                      >Download</a
+                    >
+                    <button
+                      class="btn btn-outline-secondary btnPreview"
+                      type="button"
+                      aria-expanded="false"
+                      aria-controls="preview-5"
+                    >
+                      Preview
+                    </button>
+                  </div>
+                </div>
+                <div
+                  id="preview-5"
+                  class="ratio ratio-4x3 border-top visually-hidden"
+                  aria-hidden="true"
+                >
+                  <iframe
+                    title="Preview: Living Well With Dementia Activity Groups"
+                    src="pdf/LWwD-Activty-groups.pdf#view=FitH"
+                    loading="lazy"
+                  ></iframe>
+                </div>
+              </article>
+            </div>
+
+            <!-- The Memory Guide - Tipperary -->
+            <div
+              class="col resource-item"
+              data-type="pdf"
+              data-title="The Memory Guide Tipperary"
+              data-desc="What to do following a diagnosis of dementia, with services in South Tipperary."
+            >
+              <article class="card resource-card h-100" tabindex="5">
+                <div class="card-body d-flex flex-column">
+                  <h3 class="h5 card-title">The Memory Guide – Tipperary</h3>
+                  <p class="card-text flex-grow-1">
+                    The Memory Guide: what to do following a diagnosis of
+                    dementia, including practical steps and supports in South
+                    Tipperary.
+                  </p>
+                  <div class="d-flex gap-2 mt-2">
+                    <a
+                      class="btn btn-primary"
+                      href="pdf/Memory-Guide-Tipperary.pdf"
+                      target="_blank"
+                      rel="noopener"
+                      aria-label="Open The Memory Guide - Tipperary PDF in a new tab"
+                      >Read</a
+                    >
+                    <a
+                      class="btn btn-outline-primary"
+                      href="pdf/Memory-Guide-Tipperary.pdf"
+                      download
+                      aria-label="Download The Memory Guide - Tipperary PDF"
+                      >Download</a
+                    >
+                    <button
+                      class="btn btn-outline-secondary btnPreview"
+                      type="button"
+                      aria-expanded="false"
+                      aria-controls="preview-6"
+                    >
+                      Preview
+                    </button>
+                  </div>
+                </div>
+                <div
+                  id="preview-6"
+                  class="ratio ratio-4x3 border-top visually-hidden"
+                  aria-hidden="true"
+                >
+                  <iframe
+                    title="Preview: The Memory Guide - Tipperary"
+                    src="pdf/Memory-Guide-Tipperary.pdf#view=FitH"
+                    loading="lazy"
+                  ></iframe>
+                </div>
+              </article>
+            </div>
+
+            <!-- ASI Privacy Statement Operations / Helpline -->
+            <div
+              class="col resource-item"
+              data-type="pdf"
+              data-title="ASI Privacy Statement Operations and Helpline"
+              data-desc="ASI privacy statement and fair processing notice for dementia services, advisors and helpline."
+            >
+              <article class="card resource-card h-100" tabindex="6">
+                <div class="card-body d-flex flex-column">
+                  <h3 class="h5 card-title">
+                    ASI Privacy Statement – Operations & Helpline
+                  </h3>
+                  <p class="card-text flex-grow-1">
+                    ASI fair processing notice for Operations, Dementia Advisors
+                    and the National Helpline (October 2024).
+                  </p>
+                  <div class="d-flex gap-2 mt-2">
+                    <a
+                      class="btn btn-primary"
+                      href="pdf/New-Operations-DAs-Helpline-FPN-October-2024.pdf"
+                      target="_blank"
+                      rel="noopener"
+                      aria-label="Open ASI Privacy Statement Operations and Helpline PDF in a new tab"
+                      >Read</a
+                    >
+                    <a
+                      class="btn btn-outline-primary"
+                      href="pdf/New-Operations-DAs-Helpline-FPN-October-2024.pdf"
+                      download
+                      aria-label="Download ASI Privacy Statement Operations and Helpline PDF"
+                      >Download</a
+                    >
+                    <button
+                      class="btn btn-outline-secondary btnPreview"
+                      type="button"
+                      aria-expanded="false"
+                      aria-controls="preview-7"
+                    >
+                      Preview
+                    </button>
+                  </div>
+                </div>
+                <div
+                  id="preview-7"
+                  class="ratio ratio-4x3 border-top visually-hidden"
+                  aria-hidden="true"
+                >
+                  <iframe
+                    title="Preview: ASI Privacy Statement Operations and Helpline"
+                    src="pdf/New-Operations-DAs-Helpline-FPN-October-2024.pdf#view=FitH"
+                    loading="lazy"
+                  ></iframe>
+                </div>
+              </article>
+            </div>
+
+            <!-- Service-Information-LWWD -->
+            <div
+              class="col resource-item"
+              data-type="pdf"
+              data-title="Service Information Living Well with Dementia"
+              data-desc="Overview of the Living Well with Dementia programme and its services."
+            >
+              <article class="card resource-card h-100" tabindex="7">
+                <div class="card-body d-flex flex-column">
+                  <h3 class="h5 card-title">Service Information – LWwD</h3>
+                  <p class="card-text flex-grow-1">
+                    Overview of the Living Well with Dementia programme, key
+                    messages, and supports such as choir, exercise, art and
+                    more.
+                  </p>
+                  <div class="d-flex gap-2 mt-2">
+                    <a
+                      class="btn btn-primary"
+                      href="pdf/Service-Information-LWWD.pdf"
+                      target="_blank"
+                      rel="noopener"
+                      aria-label="Open Service Information LWwD PDF in a new tab"
+                      >Read</a
+                    >
+                    <a
+                      class="btn btn-outline-primary"
+                      href="pdf/Service-Information-LWWD.pdf"
+                      download
+                      aria-label="Download Service Information LWwD PDF"
+                      >Download</a
+                    >
+                    <button
+                      class="btn btn-outline-secondary btnPreview"
+                      type="button"
+                      aria-expanded="false"
+                      aria-controls="preview-8"
+                    >
+                      Preview
+                    </button>
+                  </div>
+                </div>
+                <div
+                  id="preview-8"
+                  class="ratio ratio-4x3 border-top visually-hidden"
+                  aria-hidden="true"
+                >
+                  <iframe
+                    title="Preview: Service Information LWwD"
+                    src="pdf/Service-Information-LWWD.pdf#view=FitH"
+                    loading="lazy"
+                  ></iframe>
+                </div>
+              </article>
+            </div>
+
+            <!-- Supportive Memory e-guide -->
+            <div
+              class="col resource-item"
+              data-type="pdf"
+              data-title="Supportive Memory e-guide"
+              data-desc="Practical tips, routines, home environment ideas and technologies to support memory."
+            >
+              <article class="card resource-card h-100" tabindex="8">
+                <div class="card-body d-flex flex-column">
+                  <h3 class="h5 card-title">Supportive Memory e-guide</h3>
+                  <p class="card-text flex-grow-1">
+                    An occupational therapy–led guide with practical strategies,
+                    routines, home environment changes and technologies to
+                    support memory and daily life.
+                  </p>
+                  <div class="d-flex gap-2 mt-2">
+                    <a
+                      class="btn btn-primary"
+                      href="pdf/Supportive-Memory-e-guide.pdf"
+                      target="_blank"
+                      rel="noopener"
+                      aria-label="Open Supportive Memory e-guide PDF in a new tab"
+                      >Read</a
+                    >
+                    <a
+                      class="btn btn-outline-primary"
+                      href="pdf/Supportive-Memory-e-guide.pdf"
+                      download
+                      aria-label="Download Supportive Memory e-guide PDF"
+                      >Download</a
+                    >
+                    <button
+                      class="btn btn-outline-secondary btnPreview"
+                      type="button"
+                      aria-expanded="false"
+                      aria-controls="preview-9"
+                    >
+                      Preview
+                    </button>
+                  </div>
+                </div>
+                <div
+                  id="preview-9"
+                  class="ratio ratio-4x3 border-top visually-hidden"
+                  aria-hidden="true"
+                >
+                  <iframe
+                    title="Preview: Supportive Memory e-guide"
+                    src="pdf/Supportive-Memory-e-guide.pdf#view=FitH"
+                    loading="lazy"
+                  ></iframe>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- Links section -->
+        <section class="mb-5" aria-labelledby="links-heading">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <h2 id="links-heading" class="h4 m-0">Helpful Websites</h2>
+            <span class="text-muted" id="linkCount" aria-live="polite"></span>
+          </div>
+
+          <div id="linkList" class="vstack gap-3">
+            <!-- Links -->
+            <div
+              class="resource-item"
+              data-type="link"
+              data-title="Alzheimer Society of Ireland"
+              data-desc="Supports, helpline, and information for families and carers in Ireland."
+            >
+              <div class="card resource-card">
+                <div class="card-body">
+                  <h3 class="h5 card-title mb-1">
+                    <a
+                      href="https://alzheimer.ie/"
+                      target="_blank"
+                      rel="noopener"
+                      aria-label="Open website: Alzheimer Society of Ireland in a new tab"
+                      >Alzheimer Society of Ireland</a
+                    >
+                  </h3>
+                  <p class="card-text mb-2">
+                    Supports, helpline, and information for families and carers
+                    in Ireland.
+                  </p>
+                  <div class="small text-muted">
+                    External site • opens in new tab
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="resource-item"
+              data-type="link"
+              data-title="Dementia Understanding Together"
+              data-desc="Dementia Understanding Together website providing information and resources."
+            >
+              <div class="card resource-card">
+                <div class="card-body">
+                  <h3 class="h5 card-title mb-1">
+                    <a
+                      href="https://www.understandtogether.ie/"
+                      target="_blank"
+                      rel="noopener"
+                      aria-label="Open website: Dementia Understanding Together in a new tab"
+                      >Dementia Understanding Together</a
+                    >
+                  </h3>
+                  <p class="card-text mb-2">
+                    Dementia Understanding Together website providing
+                    information and resources.
+                  </p>
+                  <div class="small text-muted">
+                    External site • opens in new tab
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="resource-item"
+              data-type="link"
+              data-title="Training and Support for Carers and Supporters"
+              data-desc="Training for family carers and supporters provided by the Alzheimer Society of Ireland."
+            >
+              <div class="card resource-card">
+                <div class="card-body">
+                  <h3 class="h5 card-title mb-1">
+                    <a
+                      href="https://alzheimer.ie/about-dementia/family-carer-training/"
+                      target="_blank"
+                      rel="noopener"
+                      aria-label="Open website: Training and Support for Carers and Supporters in a new tab"
+                      >Training and Support for Carers and Supporters</a
+                    >
+                  </h3>
+                  <p class="card-text mb-2">
+                    Training for family carers and supporters.
+                  </p>
+                  <div class="small text-muted">
+                    External site • opens in new tab
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="resource-item"
+              data-type="link"
+              data-title="Online Carer Support Groups"
+              data-desc="Online support groups for family carers hosted by the Alzheimer Society of Ireland."
+            >
+              <div class="card resource-card">
+                <div class="card-body">
+                  <h3 class="h5 card-title mb-1">
+                    <a
+                      href="https://alzheimer.ie/service/online-family-carer-supports/"
+                      target="_blank"
+                      rel="noopener"
+                      aria-label="Open website: Online Carer Support Groups in a new tab"
+                      >Online Carer Support Groups</a
+                    >
+                  </h3>
+                  <p class="card-text mb-2">
+                    Online support groups for family carers.
+                  </p>
+                  <div class="small text-muted">
+                    External site • opens in new tab
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="resource-item"
+              data-type="link"
+              data-title="Resources and Factsheets"
+              data-desc="A wide range of resources and factsheets to support and inform anyone affected by dementia."
+            >
+              <div class="card resource-card">
+                <div class="card-body">
+                  <h3 class="h5 card-title mb-1">
+                    <a
+                      href="https://alzheimer.ie/get-support/resources-and-factsheets/"
+                      target="_blank"
+                      rel="noopener"
+                      aria-label="Open website: Resources and Factsheets in a new tab"
+                      >Resources and Factsheets</a
+                    >
+                  </h3>
+                  <p class="card-text mb-2">
+                    A wide range of resources and factsheets designed to support
+                    and inform anyone affected by dementia.
+                  </p>
+                  <div class="small text-muted">
+                    External site • opens in new tab
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="resource-item"
+              data-type="link"
+              data-title="Alzheimer Society of Ireland - Activities"
+              data-desc="Activity ideas to support engagement, self-esteem, and meaningful occupation."
+            >
+              <div class="card resource-card">
+                <div class="card-body">
+                  <h3 class="h5 card-title mb-1">
+                    <a
+                      href="https://alzheimer.ie/living-with-dementia/i-am-a-carer-family-member/activities/"
+                      target="_blank"
+                      rel="noopener"
+                      aria-label="Open website: Alzheimer Society of Ireland Activities in a new tab"
+                      >Alzheimer Society of Ireland – Activities</a
+                    >
+                  </h3>
+                  <p class="card-text mb-2">
+                    Activity ideas that can enhance self-esteem, support
+                    engagement and give meaning to daily life.
+                  </p>
+                  <div class="small text-muted">
+                    External site • opens in new tab
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="resource-item"
+              data-type="link"
+              data-title="Virtual Dementia Hub"
+              data-desc="Online activities and resources to enjoy at your own pace."
+            >
+              <div class="card resource-card">
+                <div class="card-body">
+                  <h3 class="h5 card-title mb-1">
+                    <a
+                      href="https://virtualdementiahub.ie/"
+                      target="_blank"
+                      rel="noopener"
+                      aria-label="Open website: Virtual Dementia Hub in a new tab"
+                      >Virtual Dementia Hub</a
+                    >
+                  </h3>
+                  <p class="card-text mb-2">
+                    Online hub with a variety of activities to do at your
+                    leisure.
+                  </p>
+                  <div class="small text-muted">
+                    External site • opens in new tab
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="resource-item"
+              data-type="link"
+              data-title="Irish Dementia Café Network"
+              data-desc="Monthly dementia cafés for anyone affected by dementia."
+            >
+              <div class="card resource-card">
+                <div class="card-body">
+                  <h3 class="h5 card-title mb-1">
+                    <a
+                      href="https://dementiacafe.ie/"
+                      target="_blank"
+                      rel="noopener"
+                      aria-label="Open website: Irish Dementia Café Network in a new tab"
+                      >Irish Dementia Café Network</a
+                    >
+                  </h3>
+                  <p class="card-text mb-2">
+                    A dementia café is a welcoming, once-monthly meeting for
+                    anyone who is affected by dementia.
+                  </p>
+                  <div class="small text-muted">
+                    External site • opens in new tab
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="py-4 border-top bg-white">
+      <div
+        class="container container-narrow d-flex justify-content-between align-items-center gap-3 flex-wrap"
+      >
+        <p class="m-0">© <span id="year"></span> Dementia Resource Hub</p>
+        <p class="m-0 small">Made with accessibility-first Bootstrap.</p>
+      </div>
+    </footer>
+
+    <div
+      id="liveRegion"
+      class="visually-hidden"
+      role="status"
+      aria-live="polite"
+    ></div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      (function () {
+        const body = document.body;
+        const searchInput = document.getElementById("searchInput");
+        const categorySelect = document.getElementById("categorySelect");
+        const items = Array.from(document.querySelectorAll(".resource-item"));
+        const pdfCount = document.getElementById("pdfCount");
+        const linkCount = document.getElementById("linkCount");
+        const live = document.getElementById("liveRegion");
+
+        // Accessibility controls
+        const btnUp = document.getElementById("btnFontUp");
+        const btnDown = document.getElementById("btnFontDown");
+        const btnDys = document.getElementById("btnDyslexic");
+        const btnHC = document.getElementById("btnContrast");
+
+        const LS = {
+          fontScale: "drh-font-scale",
+          dyslexic: "drh-dyslexic",
+          contrast: "drh-contrast",
+        };
+
+        function announce(msg) {
+          live.textContent = msg;
+        }
+
+        // Font scaling
+        const base = 100; // 100% as baseline
+        let scale = parseInt(localStorage.getItem(LS.fontScale) || base, 10);
+        function applyScale() {
+          body.style.fontSize = scale + "%";
+        }
+        function clamp(v) {
+          return Math.min(140, Math.max(85, v));
+        }
+        btnUp.addEventListener("click", () => {
+          scale = clamp(scale + 5);
+          localStorage.setItem(LS.fontScale, scale);
+          applyScale();
+          announce("Text size increased");
+        });
+        btnDown.addEventListener("click", () => {
+          scale = clamp(scale - 5);
+          localStorage.setItem(LS.fontScale, scale);
+          applyScale();
+          announce("Text size decreased");
+        });
+        applyScale();
+
+        // Dyslexic font toggle
+        function applyDys(val) {
+          body.classList.toggle("odx-font", val);
+          btnDys.setAttribute("aria-pressed", String(val));
+          announce(
+            val ? "Dyslexic-friendly font on" : "Dyslexic-friendly font off"
+          );
+        }
+        let dys = localStorage.getItem(LS.dyslexic) === "1";
+        applyDys(dys);
+        btnDys.addEventListener("click", () => {
+          dys = !dys;
+          localStorage.setItem(LS.dyslexic, dys ? "1" : "0");
+          applyDys(dys);
+        });
+
+        // High contrast
+        function applyHC(val) {
+          body.classList.toggle("high-contrast", val);
+          btnHC.setAttribute("aria-pressed", String(val));
+          announce(val ? "High contrast on" : "High contrast off");
+        }
+        let hc = localStorage.getItem(LS.contrast) === "1";
+        applyHC(hc);
+        btnHC.addEventListener("click", () => {
+          hc = !hc;
+          localStorage.setItem(LS.contrast, hc ? "1" : "0");
+          applyHC(hc);
+        });
+
+        // Search + filter
+        function matchItem(el, query, type) {
+          const t = (el.dataset.title + " " + el.dataset.desc).toLowerCase();
+          const okQuery = t.includes(query);
+          const okType = type === "all" || el.dataset.type === type;
+          return okQuery && okType;
+        }
+
+        function update() {
+          const q = (searchInput.value || "").toLowerCase().trim();
+          const type = categorySelect.value;
+          let pdfVisible = 0,
+            linkVisible = 0;
+
+          items.forEach((el) => {
+            const show = matchItem(el, q, type);
+            el.classList.toggle("d-none", !show);
+            if (show) {
+              if (el.dataset.type === "pdf") pdfVisible++;
+              else linkVisible++;
+            }
+          });
+          pdfCount.textContent =
+            pdfVisible + " PDF" + (pdfVisible === 1 ? "" : "s");
+          linkCount.textContent =
+            linkVisible + " link" + (linkVisible === 1 ? "" : "s");
+        }
+
+        searchInput.addEventListener("input", update);
+        categorySelect.addEventListener("change", update);
+        update();
+
+        // Preview toggles for PDFs
+        document.querySelectorAll(".btnPreview").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = btn.getAttribute("aria-controls");
+            const preview = document.getElementById(id);
+            const expanded = btn.getAttribute("aria-expanded") === "true";
+            btn.setAttribute("aria-expanded", String(!expanded));
+            preview.classList.toggle("visually-hidden", expanded);
+            preview.setAttribute("aria-hidden", String(expanded));
+            announce(expanded ? "Preview hidden" : "Preview shown");
+          });
+        });
+
+        // Year
+        document.getElementById("year").textContent = new Date().getFullYear();
+      })();
+    </script>
+  </body>
+</html>
