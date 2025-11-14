@@ -1,0 +1,103 @@
+:root {
+  --focus-ring: 0 0 0 0.25rem rgba(13, 110, 253, 0.5);
+}
+
+/* OpenDyslexic local font (optional). Place file at ./fonts/OpenDyslexic-Regular.woff2 */
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("../fonts/OpenDyslexic-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.odx-font {
+  font-family: OpenDyslexic, system-ui, -apple-system, Segoe UI, Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  letter-spacing: 0.2px;
+}
+
+/* High-contrast mode */
+.high-contrast,
+.high-contrast .card {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+/* Make all 'white/light' backgrounds dark in HC mode */
+.high-contrast .bg-white,
+.high-contrast .bg-light,
+.high-contrast header,
+.high-contrast footer,
+.high-contrast .list-group-item {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+/* Override Bootstrap text colours that stay grey or dark */
+.high-contrast .text-dark,
+.high-contrast .text-muted,
+.high-contrast .small,
+.high-contrast .lead,
+.high-contrast h1,
+.high-contrast h2,
+.high-contrast h3,
+.high-contrast h4,
+.high-contrast h5,
+.high-contrast h6,
+.high-contrast p {
+  color: #fff !important;
+}
+
+/* “External site • opens in new tab” and other muted text */
+.high-contrast .text-muted {
+  color: #e0e0e0 !important;
+}
+
+/* Search input + select */
+.high-contrast .form-control,
+.high-contrast .form-select {
+  background: #111 !important;
+  color: #fff !important;
+  border-color: #888 !important;
+}
+
+/* Input placeholder text */
+.high-contrast ::placeholder {
+  color: #ccc !important;
+  opacity: 1;
+}
+
+/* Links in high contrast */
+.high-contrast a {
+  color: #0ff !important;
+  text-decoration: underline;
+}
+
+/* Borders like header/footer lines */
+.high-contrast .border-top,
+.high-contrast .border-bottom {
+  border-color: #666 !important;
+}
+
+/* High contrast badge styling */
+.high-contrast #contrastBadge {
+  background: #fff !important;
+  color: #000 !important;
+}
+
+/* Improve focus visibility */
+:focus {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* Cards */
+.resource-card {
+  min-height: 100%;
+}
+
+/* Compact containers on very wide screens for readability */
+.container-narrow {
+  max-width: 980px;
+}
