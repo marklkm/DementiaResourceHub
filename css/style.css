@@ -17,7 +17,7 @@
   letter-spacing: 0.2px;
 }
 
-/* High-contrast mode */
+/* High-contrast mode – base */
 .high-contrast,
 .high-contrast .card {
   background: #000 !important;
@@ -51,7 +51,7 @@
 
 /* “External site • opens in new tab” and other muted text */
 .high-contrast .text-muted {
-  color: #e0e0e0 !important;
+  color: #f5f5f5 !important;
 }
 
 /* Search input + select */
@@ -59,18 +59,18 @@
 .high-contrast .form-select {
   background: #111 !important;
   color: #fff !important;
-  border-color: #888 !important;
+  border-color: #bbb !important;
 }
 
 /* Input placeholder text */
 .high-contrast ::placeholder {
-  color: #ccc !important;
+  color: #ddd !important;
   opacity: 1;
 }
 
 /* Links in high contrast */
 .high-contrast a {
-  color: #0ff !important;
+  color: #ff0 !important;          /* bright yellow links */
   text-decoration: underline;
 }
 
@@ -82,11 +82,55 @@
 
 /* High contrast badge styling */
 .high-contrast #contrastBadge {
-  background: #fff !important;
+  background: #ff0 !important;
   color: #000 !important;
 }
 
-/* Improve focus visibility */
+/* --------------------------- */
+/* HIGH CONTRAST – BUTTONS     */
+/* --------------------------- */
+
+/* General buttons in high contrast */
+.high-contrast .btn,
+.high-contrast button {
+  background: #000 !important;      /* black background */
+  color: #ff0 !important;           /* bright yellow text */
+  border-color: #ff0 !important;    /* bright yellow border */
+}
+
+/* Hover state */
+.high-contrast .btn:hover,
+.high-contrast button:hover {
+  background: #222 !important;      /* slightly lighter black */
+  color: #ff0 !important;
+  border-color: #ff0 !important;
+}
+
+/* Focus ring */
+.high-contrast .btn:focus,
+.high-contrast button:focus {
+  box-shadow: 0 0 0 0.25rem rgba(255, 255, 0, 0.7) !important;
+}
+
+/* ACTIVE / PRESSED STATE  
+   (when aria-pressed = true, e.g. High contrast or OpenDyslexic ON) */
+.high-contrast [aria-pressed="true"] {
+  background: #000 !important;      /* still black */
+  color: #ff0 !important;           /* still yellow text */
+  border-color: #ff0 !important;
+  border-width: 2px !important;     /* thicker border to show it's ON */
+}
+
+/* Specific toolbar buttons (kept here for clarity – they follow the same rules) */
+.high-contrast #btnContrast,
+.high-contrast #btnDyslexic,
+.high-contrast #btnFontUp,
+.high-contrast #btnFontDown {
+  color: #ff0 !important;
+  border-color: #ff0 !important;
+}
+
+/* Improve focus visibility globally */
 :focus {
   outline: none;
   box-shadow: var(--focus-ring);
