@@ -98,6 +98,12 @@
       hc = !hc;
       localStorage.setItem(LS.contrast, hc ? "1" : "0");
       applyHC(hc);
+
+      // Change button text automatically
+      btnHC.textContent = hc ? "High contrast off" : "High contrast on";
+
+      // Announce to screen readers
+      announce(hc ? "High contrast enabled" : "High contrast disabled");
     });
   }
 

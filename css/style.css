@@ -145,3 +145,19 @@
 .container-narrow {
   max-width: 980px;
 }
+
+
+/* Accessibility toolbar buttons – square, equal size */
+#btnContrast,
+#btnDyslexic,
+#btnFontUp,
+#btnFontDown {
+  border-radius: 0 !important;   /* remove rounded corners */
+  padding: 6px 12px !important;  /* equal padding */
+  min-width: 130px;              /* forces consistent button width */
+  text-align: center;            /* keep labels centered */
+}
+
+.btn {
+  border-radius: 0 !important;
+}
