@@ -12,7 +12,6 @@
   const btnDown = document.getElementById("btnFontDown");
   const btnDys = document.getElementById("btnDyslexic");
   const btnHC = document.getElementById("btnContrast");
-  const contrastBadge = document.getElementById("contrastBadge");
 
   const LS = {
     fontScale: "drh-font-scale",
@@ -21,27 +20,30 @@
   };
 
   function announce(msg) {
-    if (live) {
-      live.textContent = msg;
-    }
+    if (!live) return;
+    // Clear then set so repeated messages still get announced
+    live.textContent = "";
+    window.setTimeout(() => (live.textContent = msg), 10);
   }
 
+  // -----------------------
   // Font scaling
-  const base = 100; // 100% as baseline
-  let scale = parseInt(localStorage.getItem(LS.fontScale) || base, 10);
-
-  function applyScale() {
-    body.style.fontSize = scale + "%";
-  }
+  // -----------------------
+  const base = 100;
+  let scale = parseInt(localStorage.getItem(LS.fontScale) || String(base), 10);
 
   function clamp(v) {
     return Math.min(140, Math.max(85, v));
   }
 
+  function applyScale() {
+    body.style.fontSize = scale + "%";
+  }
+
   if (btnUp) {
     btnUp.addEventListener("click", () => {
       scale = clamp(scale + 5);
-      localStorage.setItem(LS.fontScale, scale);
+      localStorage.setItem(LS.fontScale, String(scale));
       applyScale();
       announce("Text size increased");
     });
@@ -50,7 +52,7 @@
   if (btnDown) {
     btnDown.addEventListener("click", () => {
       scale = clamp(scale - 5);
-      localStorage.setItem(LS.fontScale, scale);
+      localStorage.setItem(LS.fontScale, String(scale));
       applyScale();
       announce("Text size decreased");
     });
@@ -58,16 +60,17 @@
 
   applyScale();
 
+  // -----------------------
   // Dyslexic font toggle
+  // -----------------------
+  let dys = localStorage.getItem(LS.dyslexic) === "1";
+
   function applyDys(val) {
     body.classList.toggle("odx-font", val);
-    if (btnDys) {
-      btnDys.setAttribute("aria-pressed", String(val));
-    }
+    if (btnDys) btnDys.setAttribute("aria-pressed", String(val));
     announce(val ? "Dyslexic-friendly font on" : "Dyslexic-friendly font off");
   }
 
-  let dys = localStorage.getItem(LS.dyslexic) === "1";
   applyDys(dys);
 
   if (btnDys) {
@@ -78,19 +81,24 @@
     });
   }
 
-  // High contrast
+  // -----------------------
+  // High contrast toggle
+  // -----------------------
+  let hc = localStorage.getItem(LS.contrast) === "1";
+
+  function setHCLabel(val) {
+    if (!btnHC) return;
+    // label reflects current state
+    btnHC.textContent = val ? "High contrast on" : "High contrast off";
+  }
+
   function applyHC(val) {
     body.classList.toggle("high-contrast", val);
-    if (btnHC) {
-      btnHC.setAttribute("aria-pressed", String(val));
-    }
-    if (contrastBadge) {
-      contrastBadge.classList.toggle("visually-hidden", !val);
-    }
+    if (btnHC) btnHC.setAttribute("aria-pressed", String(val));
+    setHCLabel(val);
     announce(val ? "High contrast on" : "High contrast off");
   }
 
-  let hc = localStorage.getItem(LS.contrast) === "1";
   applyHC(hc);
 
   if (btnHC) {
@@ -98,18 +106,18 @@
       hc = !hc;
       localStorage.setItem(LS.contrast, hc ? "1" : "0");
       applyHC(hc);
-
-      // Change button text automatically
-      btnHC.textContent = hc ? "High contrast off" : "High contrast on";
-
-      // Announce to screen readers
-      announce(hc ? "High contrast enabled" : "High contrast disabled");
     });
   }
 
+  // -----------------------
   // Search + filter
+  // -----------------------
   function matchItem(el, query, type) {
-    const t = (el.dataset.title + " " + el.dataset.desc).toLowerCase();
+    const t = (
+      (el.dataset.title || "") +
+      " " +
+      (el.dataset.desc || "")
+    ).toLowerCase();
     const okQuery = t.includes(query);
     const okType = type === "all" || el.dataset.type === type;
     return okQuery && okType;
@@ -124,44 +132,50 @@
     items.forEach((el) => {
       const show = matchItem(el, q, type);
       el.classList.toggle("d-none", !show);
+
       if (show) {
         if (el.dataset.type === "pdf") pdfVisible++;
         else linkVisible++;
       }
     });
 
-    if (pdfCount) {
-      pdfCount.textContent =
-        pdfVisible + " PDF" + (pdfVisible === 1 ? "" : "s");
-    }
-    if (linkCount) {
-      linkCount.textContent =
-        linkVisible + " link" + (linkVisible === 1 ? "" : "s");
-    }
+    if (pdfCount)
+      pdfCount.textContent = `${pdfVisible} PDF${pdfVisible === 1 ? "" : "s"}`;
+    if (linkCount)
+      linkCount.textContent = `${linkVisible} link${
+        linkVisible === 1 ? "" : "s"
+      }`;
   }
 
   if (searchInput) searchInput.addEventListener("input", update);
   if (categorySelect) categorySelect.addEventListener("change", update);
   update();
 
-  // Preview toggles for PDFs
+  // -----------------------
+  // Preview toggles for PDFs (FIXED)
+  // -----------------------
   document.querySelectorAll(".btnPreview").forEach((btn) => {
     btn.addEventListener("click", () => {
       const id = btn.getAttribute("aria-controls");
       const preview = id ? document.getElementById(id) : null;
-      const expanded = btn.getAttribute("aria-expanded") === "true";
-      btn.setAttribute("aria-expanded", String(!expanded));
+
+      const isExpanded = btn.getAttribute("aria-expanded") === "true";
+      const willExpand = !isExpanded;
+
+      btn.setAttribute("aria-expanded", String(willExpand));
+
       if (preview) {
-        preview.classList.toggle("visually-hidden", expanded);
-        preview.setAttribute("aria-hidden", String(expanded));
+        preview.classList.toggle("visually-hidden", !willExpand);
+        preview.setAttribute("aria-hidden", String(!willExpand));
       }
-      announce(expanded ? "Preview hidden" : "Preview shown");
+
+      announce(willExpand ? "Preview shown" : "Preview hidden");
     });
   });
 
+  // -----------------------
   // Year in footer
+  // -----------------------
   const yearSpan = document.getElementById("year");
-  if (yearSpan) {
-    yearSpan.textContent = new Date().getFullYear();
-  }
+  if (yearSpan) yearSpan.textContent = String(new Date().getFullYear());
 })();

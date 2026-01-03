@@ -2,11 +2,13 @@
   --focus-ring: 0 0 0 0.25rem rgba(13, 110, 253, 0.5);
 }
 
-/* OpenDyslexic local font (optional). Place file at ./fonts/OpenDyslexic-Regular.woff2 */
+/* OpenDyslexic local font (optional).
+   Place file at: /fonts/OpenDyslexic-Regular.woff2
+   (CSS file is in /css, so ../fonts is correct) */
 @font-face {
   font-family: "OpenDyslexic";
   src: url("../fonts/OpenDyslexic-Regular.woff2") format("woff2");
-  font-weight: normal;
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
@@ -17,14 +19,63 @@
   letter-spacing: 0.2px;
 }
 
-/* High-contrast mode – base */
+/* Better focus handling: keyboard users get strong focus, mouse users don’t get noisy focus */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid #0d6efd;
+  outline-offset: 2px;
+  box-shadow: var(--focus-ring);
+}
+
+/* Optional: forced colors (Windows High Contrast) */
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+    box-shadow: none;
+  }
+}
+
+/* Cards */
+.resource-card {
+  min-height: 100%;
+}
+
+/* Compact container on very wide screens for readability */
+.container-narrow {
+  max-width: 980px;
+}
+
+/* Accessibility toolbar buttons – consistent shape/size */
+#btnContrast,
+#btnDyslexic,
+#btnFontUp,
+#btnFontDown {
+  border-radius: 0 !important;
+  padding: 6px 12px !important;
+  min-width: 130px;
+  text-align: center;
+}
+
+.btn {
+  border-radius: 0 !important;
+}
+
+/* --------------------------- */
+/* HIGH CONTRAST MODE          */
+/* --------------------------- */
+
+/* Base */
 .high-contrast,
 .high-contrast .card {
   background: #000 !important;
   color: #fff !important;
 }
 
-/* Make all 'white/light' backgrounds dark in HC mode */
+/* Force light backgrounds to dark */
 .high-contrast .bg-white,
 .high-contrast .bg-light,
 .high-contrast header,
@@ -34,7 +85,7 @@
   color: #fff !important;
 }
 
-/* Override Bootstrap text colours that stay grey or dark */
+/* Override Bootstrap text colors */
 .high-contrast .text-dark,
 .high-contrast .text-muted,
 .high-contrast .small,
@@ -49,12 +100,11 @@
   color: #fff !important;
 }
 
-/* “External site • opens in new tab” and other muted text */
 .high-contrast .text-muted {
   color: #f5f5f5 !important;
 }
 
-/* Search input + select */
+/* Inputs */
 .high-contrast .form-control,
 .high-contrast .form-select {
   background: #111 !important;
@@ -62,102 +112,100 @@
   border-color: #bbb !important;
 }
 
-/* Input placeholder text */
 .high-contrast ::placeholder {
   color: #ddd !important;
   opacity: 1;
 }
 
-/* Links in high contrast */
+/* Links */
 .high-contrast a {
-  color: #ff0 !important;          /* bright yellow links */
+  color: #ff0 !important;
   text-decoration: underline;
 }
 
-/* Borders like header/footer lines */
+.high-contrast a:focus-visible {
+  outline: 2px solid #ff0;
+  outline-offset: 2px;
+}
+
+/* Borders */
 .high-contrast .border-top,
 .high-contrast .border-bottom {
   border-color: #666 !important;
 }
 
-/* High contrast badge styling */
-.high-contrast #contrastBadge {
-  background: #ff0 !important;
-  color: #000 !important;
-}
-
 /* --------------------------- */
 /* HIGH CONTRAST – BUTTONS     */
+/* Keep "Read" most prominent  */
 /* --------------------------- */
 
-/* General buttons in high contrast */
+/* Default button styling in HC (scoped to Bootstrap buttons only) */
 .high-contrast .btn,
-.high-contrast button {
-  background: #000 !important;      /* black background */
-  color: #ff0 !important;           /* bright yellow text */
-  border-color: #ff0 !important;    /* bright yellow border */
-}
-
-/* Hover state */
-.high-contrast .btn:hover,
-.high-contrast button:hover {
-  background: #222 !important;      /* slightly lighter black */
+.high-contrast button.btn {
+  background: #000 !important;
   color: #ff0 !important;
   border-color: #ff0 !important;
 }
 
-/* Focus ring */
+/* Primary button (READ) stands out */
+.high-contrast .btn.btn-primary {
+  background: #ff0 !important;
+  color: #000 !important;
+  border-color: #ff0 !important;
+  font-weight: 700;
+}
+
+/* Outline buttons */
+.high-contrast .btn.btn-outline-primary,
+.high-contrast .btn.btn-outline-secondary,
+.high-contrast .btn.btn-outline-dark {
+  background: #000 !important;
+  color: #ff0 !important;
+  border-color: #ff0 !important;
+}
+
+/* Hover */
+.high-contrast .btn:hover,
+.high-contrast button.btn:hover {
+  background: #222 !important;
+  color: #ff0 !important;
+  border-color: #ff0 !important;
+}
+
+/* Hover for primary: invert so it visibly changes without introducing new colors */
+.high-contrast .btn.btn-primary:hover {
+  background: #000 !important;
+  color: #ff0 !important;
+}
+
+/* Focus ring in HC */
 .high-contrast .btn:focus,
-.high-contrast button:focus {
+.high-contrast button.btn:focus {
   box-shadow: 0 0 0 0.25rem rgba(255, 255, 0, 0.7) !important;
 }
 
-/* ACTIVE / PRESSED STATE  
-   (when aria-pressed = true, e.g. High contrast or OpenDyslexic ON) */
+/* Pressed/toggled toolbar buttons (make ON state obvious) */
 .high-contrast [aria-pressed="true"] {
-  background: #000 !important;      /* still black */
-  color: #ff0 !important;           /* still yellow text */
+  background: #ff0 !important;
+  color: #000 !important;
   border-color: #ff0 !important;
-  border-width: 2px !important;     /* thicker border to show it's ON */
+  border-width: 2px !important;
 }
 
-/* Specific toolbar buttons (kept here for clarity – they follow the same rules) */
-.high-contrast #btnContrast,
-.high-contrast #btnDyslexic,
-.high-contrast #btnFontUp,
-.high-contrast #btnFontDown {
-  color: #ff0 !important;
-  border-color: #ff0 !important;
+/* Preview = tertiary (quieter than Download) */
+.high-contrast .btnPreview,
+.high-contrast .btn.btn-outline-secondary.btnPreview {
+  opacity: 0.85 !important;
+  font-weight: 400 !important;
 }
 
-/* Improve focus visibility globally */
-:focus {
-  outline: none;
-  box-shadow: var(--focus-ring);
+.high-contrast .btnPreview:hover,
+.high-contrast .btn.btn-outline-secondary.btnPreview:hover {
+  opacity: 1 !important;
+  background: #111 !important;
 }
 
-/* Cards */
-.resource-card {
-  min-height: 100%;
-}
-
-/* Compact containers on very wide screens for readability */
-.container-narrow {
-  max-width: 980px;
-}
-
-
-/* Accessibility toolbar buttons – square, equal size */
-#btnContrast,
-#btnDyslexic,
-#btnFontUp,
-#btnFontDown {
-  border-radius: 0 !important;   /* remove rounded corners */
-  padding: 6px 12px !important;  /* equal padding */
-  min-width: 130px;              /* forces consistent button width */
-  text-align: center;            /* keep labels centered */
-}
-
-.btn {
-  border-radius: 0 !important;
+/* Download slightly stronger than Preview */
+.high-contrast .btn.btn-outline-primary[download] {
+  font-weight: 600 !important;
 }
