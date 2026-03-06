@@ -23,7 +23,9 @@
     if (!live) return;
     // Clear then set so repeated messages still get announced
     live.textContent = "";
-    window.setTimeout(() => (live.textContent = msg), 10);
+    window.setTimeout(() => {
+      live.textContent = msg;
+    }, 10);
   }
 
   // -----------------------
@@ -67,7 +69,9 @@
 
   function applyDys(val) {
     body.classList.toggle("odx-font", val);
-    if (btnDys) btnDys.setAttribute("aria-pressed", String(val));
+    if (btnDys) {
+      btnDys.setAttribute("aria-pressed", String(val));
+    }
     announce(val ? "Dyslexic-friendly font on" : "Dyslexic-friendly font off");
   }
 
@@ -88,14 +92,16 @@
 
   function setHCLabel(val) {
     if (!btnHC) return;
-    // label reflects current state
-    btnHC.textContent = val ? "High contrast on" : "High contrast off";
+    // label shows the action the button will perform next
+    btnHC.textContent = val ? "High contrast off" : "High contrast on";
   }
 
   function applyHC(val) {
     body.classList.toggle("high-contrast", val);
-    if (btnHC) btnHC.setAttribute("aria-pressed", String(val));
-    setHCLabel(val);
+    if (btnHC) {
+      btnHC.setAttribute("aria-pressed", String(val));
+      setHCLabel(val);
+    }
     announce(val ? "High contrast on" : "High contrast off");
   }
 
@@ -118,41 +124,53 @@
       " " +
       (el.dataset.desc || "")
     ).toLowerCase();
+
     const okQuery = t.includes(query);
     const okType = type === "all" || el.dataset.type === type;
+
     return okQuery && okType;
   }
 
   function update() {
     const q = (searchInput?.value || "").toLowerCase().trim();
     const type = categorySelect?.value || "all";
-    let pdfVisible = 0,
-      linkVisible = 0;
+    let pdfVisible = 0;
+    let linkVisible = 0;
 
     items.forEach((el) => {
       const show = matchItem(el, q, type);
       el.classList.toggle("d-none", !show);
 
       if (show) {
-        if (el.dataset.type === "pdf") pdfVisible++;
-        else linkVisible++;
+        if (el.dataset.type === "pdf") {
+          pdfVisible++;
+        } else {
+          linkVisible++;
+        }
       }
     });
 
-    if (pdfCount)
+    if (pdfCount) {
       pdfCount.textContent = `${pdfVisible} PDF${pdfVisible === 1 ? "" : "s"}`;
-    if (linkCount)
-      linkCount.textContent = `${linkVisible} link${
-        linkVisible === 1 ? "" : "s"
-      }`;
+    }
+
+    if (linkCount) {
+      linkCount.textContent = `${linkVisible} link${linkVisible === 1 ? "" : "s"}`;
+    }
   }
 
-  if (searchInput) searchInput.addEventListener("input", update);
-  if (categorySelect) categorySelect.addEventListener("change", update);
+  if (searchInput) {
+    searchInput.addEventListener("input", update);
+  }
+
+  if (categorySelect) {
+    categorySelect.addEventListener("change", update);
+  }
+
   update();
 
   // -----------------------
-  // Preview toggles for PDFs (FIXED)
+  // Preview toggles for PDFs
   // -----------------------
   document.querySelectorAll(".btnPreview").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -177,5 +195,7 @@
   // Year in footer
   // -----------------------
   const yearSpan = document.getElementById("year");
-  if (yearSpan) yearSpan.textContent = String(new Date().getFullYear());
+  if (yearSpan) {
+    yearSpan.textContent = String(new Date().getFullYear());
+  }
 })();
