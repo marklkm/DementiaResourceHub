@@ -209,3 +209,17 @@
 .high-contrast .btn.btn-outline-primary[download] {
   font-weight: 600 !important;
 }
+
+.visually-hidden-focusable:focus,
+.visually-hidden-focusable:active {
+  position: absolute !important;
+  top: 0.5rem !important;
+  left: 0.5rem !important;
+  z-index: 1050 !important;
+  padding: 0.75rem 1rem !important;
+  background: #000 !important;
+  color: #fff !important;
+  border: 2px solid #fff !important;
+  text-decoration: underline !important;
+  opacity: 1 !important;
+}
