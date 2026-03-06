@@ -238,3 +238,8 @@
   outline: 3px solid #ff0 !important;
   outline-offset: 2px;
 }
+
+.card-img-top {
+  height: 220px;
+  object-fit: cover;
+}
