@@ -243,3 +243,16 @@
   height: 220px;
   object-fit: cover;
 }
+
+.site-logo {
+  object-fit: contain;
+  height: 50px;
+  width: auto;
+}
+
+/* slightly larger on big screens */
+@media (min-width: 768px) {
+  .site-logo {
+    height: 60px;
+  }
+}
